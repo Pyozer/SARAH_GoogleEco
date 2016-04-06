@@ -60,7 +60,7 @@ function checkScribe(event, action, callback, what) {
 function decodeScribe(search, callback, what) {
 
 	console.log ("Search: " + search);
-	var rgxp = /(en|aux|au|de la|des) (.+)/i;
+	var rgxp = / (en|aux|au|de la|des) (.+)/i;
 
 	var match = search.match(rgxp);
 	if (!match || match.length <= 1){
@@ -125,6 +125,8 @@ function ecogoogle(match, callback, what) {
 	        	ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
 	        	callback();
 	        } else {
+	        	var resultat = resultat.replace('billion', 'milliard').replace('billions', 'milliards').replace('USD', 'de dollars').replace('%', 'pourcent').replace('(', 'en ').replace(')', '');
+
 	        	file_content[search] = resultat;
 	        	chaine = JSON.stringify(file_content, null, '\t');
 				fs.writeFile(filePath, chaine, function (err) {

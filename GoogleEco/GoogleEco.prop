@@ -2,8 +2,8 @@
 	"modules" : { 
 		"GoogleEco"  : {
 			"description": "Permet de récupérer des informations sur un pays via Google (ex: PIB,...)",
-			"auteur": "Jean-Charles Moussé",
-			"version": "1.0"			
+			"version": "1.0",
+			"auteur": "Jean-Charles Moussé"
 		}
 	}
 }

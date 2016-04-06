@@ -1,5 +1,5 @@
 <grammar version="1.0" xml:lang="fr-FR" mode="voice" root="ruleGoogleEco" xmlns="http://www.w3.org/2001/06/grammar" tag-format="semantics/1.0">
-	<rule id="ruleGoogleInfo" scope="public">
+	<rule id="ruleGoogleEco" scope="public">
 		<example>Jarvis tu peux me donner le PIB en France ?</example>
 		<tag>out.action=new Object(); </tag>
 
@@ -14,6 +14,7 @@
 				<item>c'est quoi</item>
 				<item>il est à combien</item>
 				<item>quelle est</item>
+				<item>quel est</item>
 			</one-of>
 		</item>
     	<item repeat="0-1">
