@@ -47,9 +47,19 @@
 				<item>de la</item>
 				<item>des</item>
 			</one-of>
+
+			<ruleref special="GARBAGE" />
 		</item>
 
-		<ruleref special="GARBAGE" />
+		<item repeat="0-1">
+			<one-of>
+				<item>mondiale<tag>out.action.where="world";</tag></item>
+				<item>du monde<tag>out.action.where="world";</tag></item>
+				<item>dans le monde<tag>out.action.where="world";</tag></item>
+				<item>sur la planète<tag>out.action.where="world";</tag></item>
+				<item>planète<tag>out.action.where="world";</tag></item>
+			</one-of>
+		</item>
 		
 		<tag>out.action._attributes.uri="http://127.0.0.1:8080/sarah/GoogleEco";</tag>
 	</rule>

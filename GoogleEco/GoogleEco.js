@@ -23,7 +23,7 @@ exports.action = function(data, callback){
 	console.log("GoogleEco call log: " + util.inspect(data, { showHidden: true, depth: null }));
 
 	SARAH.context.scribe.hook = function(event) {
-		checkScribe(event, data.action, callback, data.what); 
+		checkScribe(event, data.action, callback, data); 
 	};
 	
 	token = setTimeout(function(){
@@ -32,20 +32,20 @@ exports.action = function(data, callback){
 
 }
 
-function checkScribe(event, action, callback, what) {
+function checkScribe(event, action, callback, data) {
 
 	if (event == FULL_RECO) {
 		clearTimeout(token);
 		SARAH.context.scribe.hook = undefined;
 		// aurait-on trouvé ?
-		decodeScribe(SARAH.context.scribe.lastReco, callback, what);
+		decodeScribe(SARAH.context.scribe.lastReco, callback, data);
 
 	} else if(event == TIME_ELAPSED) {
 		// timeout !
 		SARAH.context.scribe.hook = undefined;
 		// aurait-on compris autre chose ?
 		if (SARAH.context.scribe.lastPartialConfidence >= 0.7 && SARAH.context.scribe.compteurPartial > SARAH.context.scribe.compteur) {
-			decodeScribe(SARAH.context.scribe.lastPartial, callback, what);
+			decodeScribe(SARAH.context.scribe.lastPartial, callback, data);
 		} else {
 			SARAH.context.scribe.activePlugin('Aucun (GoogleEco)');
 			ScribeSpeak("Désolé je n'ai pas compris. Merci de réessayer.", true);
@@ -57,26 +57,30 @@ function checkScribe(event, action, callback, what) {
 	}
 }
 
-function decodeScribe(search, callback, what) {
+function decodeScribe(search, callback, data) {
 
 	console.log ("Search: " + search);
-	var rgxp = / (en|aux|au|de la|des) (.+)/i;
+	if(!data.where || data.where != "world") {
+		var rgxp = / (en|aux|au|de la|des) (.+)/i;
+		
+		var match = search.match(rgxp);
+		if (!match || match.length <= 1){
+			SARAH.context.scribe.activePlugin('Aucun (GoogleEco)');
+			ScribeSpeak("Désolé je n'ai pas compris.", true);
+			return callback();
+		}
 
-	var match = search.match(rgxp);
-	if (!match || match.length <= 1){
-		SARAH.context.scribe.activePlugin('Aucun (GoogleEco)');
-		ScribeSpeak("Désolé je n'ai pas compris.", true);
-		return callback();
+		return ecogoogle(match, callback, data);
+	} else {
+		return population_mondiale(callback);
 	}
-
-	return ecogoogle(match, callback, what);
 }
 
-function ecogoogle(match, callback, what) {
+function ecogoogle(match, callback, data) {
 
 	var pays = match[2].trim();
 	var deter = match[1].trim();
-	var search = what + " " + deter + " " + pays;
+	var search = data.what + " " + deter + " " + pays;
 
 	var fs = require("fs");
 	var path = require('path');
@@ -140,4 +144,41 @@ function ecogoogle(match, callback, what) {
 		    return;
 	    });
 	}
+}
+
+function population_mondiale(callback) {
+	// On ne stock pas car ce chiffre évolue vite
+	var url = "http://www.populationmondiale.com/population/clock.php?lang=fr&aff=0&size=30&cpop=C0C0C0&cclock=CC0000";
+	console.log('Url Request: ' + url);
+
+	var request = require('request');
+	var cheerio = require('cheerio');
+
+	var options = {
+		'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36',
+		'Accept-Charset': 'utf-8'
+	};
+		
+	request({ 'uri': url, 'headers': options }, function(error, response, html) {
+
+    	if (error || response.statusCode != 200) {
+			ScribeSpeak("La requête a échoué. Erreur " + response.statusCode);
+			callback();
+			return;
+	    }
+        var $ = cheerio.load(html);
+
+        var population = $('a.clock').text().trim();
+
+        if(population == "") {
+        	console.log("Impossible de récupérer les informations");
+        	ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
+        	callback();
+        } else {
+        	console.log("Informations: " + population);
+        	ScribeSpeak("Actuellement il y a " + population + " sur la planète");
+        	callback();
+        }
+	    return;
+    });
 }
