@@ -48,8 +48,8 @@ function checkScribe(event, action, callback, data) {
 			decodeScribe(SARAH.context.scribe.lastPartial, callback, data);
 		} else {
 			SARAH.context.scribe.activePlugin('Aucun (GoogleEco)');
-			ScribeSpeak("Désolé je n'ai pas compris. Merci de réessayer.", true);
-			return callback();
+			//ScribeSpeak("Désolé je n'ai pas compris. Merci de réessayer.", true);
+			return callback({ 'tts': "Désolé je n'ai pas compris. Merci de réessayer." });
 		}
 		
 	} else {
@@ -66,8 +66,8 @@ function decodeScribe(search, callback, data) {
 		var match = search.match(rgxp);
 		if (!match || match.length <= 1){
 			SARAH.context.scribe.activePlugin('Aucun (GoogleEco)');
-			ScribeSpeak("Désolé je n'ai pas compris.", true);
-			return callback();
+			//ScribeSpeak("Désolé je n'ai pas compris.", true);
+			return callback({ 'tts': "Désolé je n'ai pas compris" });
 		}
 
 		return ecogoogle(match, callback, data);
@@ -93,8 +93,8 @@ function ecogoogle(match, callback, data) {
 	if(typeof file_content[search] != 'undefined' && file_content[search] != "") {
 		var infos = file_content[search];
 		console.log("Informations: " + infos);
-		ScribeSpeak(infos);
-		callback();
+		//ScribeSpeak(infos);
+		callback({ 'tts': infos});
 		return;
 
 	} else {
@@ -113,8 +113,8 @@ function ecogoogle(match, callback, data) {
 		request({ 'uri': url, 'headers': options }, function(error, response, html) {
 
 	    	if (error || response.statusCode != 200) {
-				ScribeSpeak("La requête vers Google a échoué. Erreur " + response.statusCode);
-				callback();
+				//ScribeSpeak("La requête vers Google a échoué. Erreur " + response.statusCode);
+				callback({ 'tts': "La requête vers Google a échoué. Erreur " + response.statusCode});
 				return;
 		    }
 	        var $ = cheerio.load(html);
@@ -126,8 +126,8 @@ function ecogoogle(match, callback, data) {
 
 	        if(resultat == "") {
 	        	console.log("Impossible de récupérer les informations sur Google");
-	        	ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
-	        	callback();
+	        	//ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
+	        	callback({ 'tts': "Désolé, je n'ai pas réussi à récupérer d'informations" });
 	        } else {
 	        	var resultat = resultat.replace('billion', 'milliard').replace('billions', 'milliards').replace('USD', 'de dollars').replace('%', 'pourcent').replace('(', 'en ').replace(')', '');
 
@@ -138,8 +138,8 @@ function ecogoogle(match, callback, data) {
 				});
 
 	        	console.log("Informations: " + resultat);
-	        	ScribeSpeak(resultat);
-	        	callback();
+	        	//ScribeSpeak(resultat);
+	        	callback({ 'tts': resultat });
 	        }
 		    return;
 	    });
@@ -162,8 +162,8 @@ function population_mondiale(callback) {
 	request({ 'uri': url, 'headers': options }, function(error, response, html) {
 
     	if (error || response.statusCode != 200) {
-			ScribeSpeak("La requête a échoué. Erreur " + response.statusCode);
-			callback();
+			//ScribeSpeak("La requête a échoué. Erreur " + response.statusCode);
+			callback({ 'tts': "La requête a échoué. Erreur " + response.statusCode });
 			return;
 	    }
         var $ = cheerio.load(html);
@@ -172,12 +172,12 @@ function population_mondiale(callback) {
 
         if(population == "") {
         	console.log("Impossible de récupérer les informations");
-        	ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
-        	callback();
+        	//ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
+        	callback({ 'tts': "Désolé, je n'ai pas réussi à récupérer d'informations" });
         } else {
         	console.log("Informations: " + population);
-        	ScribeSpeak("Actuellement il y a " + population + " sur la planète");
-        	callback();
+        	//ScribeSpeak("Actuellement il y a " + population + " sur la planète");
+        	callback({ 'tts': "Actuellement il y a " + population + " sur la planète" });
         }
 	    return;
     });
