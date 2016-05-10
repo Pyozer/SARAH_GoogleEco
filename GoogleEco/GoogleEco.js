@@ -60,8 +60,8 @@ function checkScribe(event, action, callback, data) {
 function decodeScribe(search, callback, data) {
 
 	console.log ("Search: " + search);
-	if(!data.where || data.where != "world") {
-		var rgxp = / (en|aux|au|de la|des) (.+)/i;
+	if(!data.where || data.what != "population" || data.where == "") {
+		var rgxp = / (en|aux|au|de la|des|de) (.+)/i;
 		
 		var match = search.match(rgxp);
 		if (!match || match.length <= 1){
@@ -122,9 +122,19 @@ function ecogoogle(match, callback, data) {
 	        var infos = $('#search #ires .g #_vBb span._m3b').text().trim();
 	        var desc = $('#search #ires .g #_vBb div._eGc').text().trim();
 
+	        var rgxp = /(.+)(billions|billion)/i;
+			var match = infos.match(rgxp);
+			if (match) {
+				var number = match[1].replace(',', '.');
+				var number = parseFloat(number);
+				var numberround = Math.round(number * 1000);
+				infos = infos.replace(match[1], '');
+				infos = numberround + " " + infos;
+			}
+
 	        var resultat = desc + ". " + infos;
 
-	        if(resultat == "") {
+	        if(infos == "" || desc == "") {
 	        	console.log("Impossible de récupérer les informations sur Google");
 	        	//ScribeSpeak("Désolé, je n'ai pas réussi à récupérer d'informations", true);
 	        	callback({ 'tts': "Désolé, je n'ai pas réussi à récupérer d'informations" });

@@ -20,6 +20,7 @@
     	<item repeat="0-1">
 			<one-of>
 				<item>le pib<tag>out.action.what="pib";</tag></item>
+				<item>le PIB<tag>out.action.what="pib";</tag></item>
 				<item>le pays b<tag>out.action.what="pib";</tag></item>
 				<item>le pib par habitant<tag>out.action.what="pib par habitant";</tag></item>
 				<item>le pays b par habitant<tag>out.action.what="pib par habitant";</tag></item>
@@ -29,6 +30,7 @@
 
 				<item>la population<tag>out.action.what="population";</tag></item>
 				<item>le nombre d'habitants<tag>out.action.what="population";</tag></item>
+				<item>le nombre de personne<tag>out.action.what="population";</tag></item>
 
 				<item>l'espérance de vie<tag>out.action.what="espérence de vie";</tag></item>
 				<item>taux de fécondité<tag>out.action.what="taux de fécondité";</tag></item>
@@ -46,6 +48,9 @@
 				<item>au</item>
 				<item>de la</item>
 				<item>des</item>
+				<item>de</item>
+				<item>de l'</item>
+				<item>du</item>
 			</one-of>
 
 			<ruleref special="GARBAGE" />
@@ -54,10 +59,9 @@
 		<item repeat="0-1">
 			<one-of>
 				<item>mondiale<tag>out.action.where="world";</tag></item>
-				<item>du monde<tag>out.action.where="world";</tag></item>
 				<item>dans le monde<tag>out.action.where="world";</tag></item>
 				<item>sur la planète<tag>out.action.where="world";</tag></item>
-				<item>planète<tag>out.action.where="world";</tag></item>
+				<item>sur terre<tag>out.action.where="world";</tag></item>
 			</one-of>
 		</item>
 		
